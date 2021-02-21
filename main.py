@@ -7,14 +7,20 @@ def randomAccountSelector():
   selectedAcc = randint(0, len(game_data.data))
   return game_data.data.pop(selectedAcc)
 
-def printGame(twoIGAcc):
+def printGame(twoIGAcc, winSentence=""):
+  print(art.logo)
   acc1 = twoIGAcc[0]
   acc2 = twoIGAcc[1]
-  print(f'Compare A: {acc1["name"]}, a {acc1["description"]}, from {acc1["country"]}')
+  print(f'{winSentence}\nCompare A: {acc1["name"]}, a {acc1["description"]}, from {acc1["country"]}')
 
   print(art.vs)
 
   print(f'Against B: {acc2["name"]}, a {acc2["description"]}, from {acc2["country"]}')
+
+def getUserInput():
+  userAns = input('Who has more followers? Type A or B: ')
+  
+  return userAns
 
 def checkGreater(twoIGAcc):
   acc1 = twoIGAcc[0]
@@ -31,8 +37,6 @@ def checkGameWin(twoIGAcc, userIn):
   moreFollower = ""
   moreFollower = checkGreater(twoIGAcc)
 
-  print(f'Pssst {moreFollower} has more followers.')
-
   if userIn.upper() == moreFollower:
     if moreFollower == "A":
       twoIGAcc.pop(1)
@@ -41,36 +45,34 @@ def checkGameWin(twoIGAcc, userIn):
     return True
   
   else:
-    print("Noob, lol.")
+    print("Nope. You lose.")
     return False
 
-def game():
-  print(art.logo)
-  twoIGAcc = []
+def playGame(twoIGAcc, userAns):
   score = 0
   resumeGame = True
+
+  #check if user's answer is correct and continue
+  while resumeGame:
+    if checkGameWin(twoIGAcc, userAns): 
+      score += 1
+      nextAcc = randomAccountSelector()
+      twoIGAcc.append(nextAcc)
+      printGame(twoIGAcc, f"Yes, You're correct. Your current score is: {score}") 
+      userAns = input('Who has more followers? Type A or B: ')
+    else:
+      resumeGame = False
+
+def game():
+  twoIGAcc = []
   
   #initialize the game with 2 accounts
   for i in range(2):
     twoIGAcc.append(randomAccountSelector())
 
   printGame(twoIGAcc)
-
-  userAns = input('Who has more followers? Type A or B: ')
-
-  #check if user's answer is correct and continue
-  while resumeGame:
-    if checkGameWin(twoIGAcc, userAns): 
-      score += 1
-      print(art.logo)
-      print(f"Yes, You're correct. Your current score is: {score}")
-      nextAcc = randomAccountSelector()
-      twoIGAcc.append(nextAcc)
-      printGame(twoIGAcc) 
-      userAns = input('Who has more followers? Type A or B: ')
-    else:
-      resumeGame = False
+  userAns = getUserInput()
   
-  print(twoIGAcc)
+  playGame(twoIGAcc, userAns)  
 
 game()
